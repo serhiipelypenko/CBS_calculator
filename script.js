@@ -79,13 +79,11 @@ function rulesWithPlus(symbol){
 }
 
 function rulesWithDiv(symbol){
-    return !(symbol === "/" && preparedCondition.length === 0) &&
-        !(symbol === "/" && preparedCondition.includes(symbol.toLowerCase()));
+    return !(symbol === "/" && preparedCondition.length === 0);
 }
 
 function rulesWithMulti(symbol){
-    return !(symbol === "*" && preparedCondition.length === 0) &&
-        !(symbol === "*" && preparedCondition.includes(symbol.toLowerCase()));
+    return !(symbol === "*" && preparedCondition.length === 0);
 }
 
 function validateSymbols(symbol){
