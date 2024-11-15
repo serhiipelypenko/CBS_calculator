@@ -8,16 +8,16 @@ const operationSymbols = ["+","-","*","/"];
 
 buttons.forEach(button => {
    button.addEventListener("click", () => {
-       solution(button.innerText);
+       calculate(button.innerText);
    });
 });
 
 document.addEventListener("keydown", function (e) {
     let symbol = e.key === "Enter" ? "=" : e.key;
-    solution(symbol);
+    calculate(symbol);
 });
 
-function solution(symbol){
+function calculate(symbol){
     if(validateSymbols(symbol)){
         if(symbol.toLowerCase() === 'c'){
             preparedCondition = [];
@@ -43,11 +43,10 @@ function solution(symbol){
     }
 }
 
-function rulesWithDot(symbol){
+function rulesWithDot(){
     let canUseDot = true;
-    if(symbol === "." && preparedCondition.includes(symbol.toLowerCase())){
-        let lastPositionDot = preparedCondition.lastIndexOf(symbol);
-
+    if(preparedCondition.includes(".")){
+        let lastPositionDot = preparedCondition.lastIndexOf(".");
         canUseDot = false;
         let useOperation = false;
         for (let i = lastPositionDot; i < preparedCondition.length; i++) {
@@ -58,10 +57,7 @@ function rulesWithDot(symbol){
             }
         }
     }
-    return !(symbol === "." && preparedCondition.length === 0) && canUseDot/* &&
-        !(symbol === "." && preparedCondition.includes(symbol.toLowerCase()))*/;
-
-
+    return isFirstSymbolExists() && canUseDot;
 }
 
 function commonRules(symbol){
@@ -70,24 +66,37 @@ function commonRules(symbol){
     return !doubleOperationSymbol;
 }
 
-function rulesWithMinus(symbol){
-      return symbol === "-" ? preparedCondition[preparedCondition.length-1]!==symbol : true;
+function isFirstSymbolExists(){
+    return !(preparedCondition.length === 0);
 }
 
-function rulesWithPlus(symbol){
-    return symbol === "+" ? preparedCondition[preparedCondition.length-1]!==symbol : true;
+function prevSymbolNotDot(){
+    return preparedCondition[preparedCondition.length-1]!==".";
 }
 
-function rulesWithDiv(symbol){
-    return !(symbol === "/" && preparedCondition.length === 0);
-}
-
-function rulesWithMulti(symbol){
-    return !(symbol === "*" && preparedCondition.length === 0);
+function firstSymbolZeroIsOnlyOne(){
+    return preparedCondition.length === 1 && preparedCondition[0] === 0 || preparedCondition.length !== 1;
 }
 
 function validateSymbols(symbol){
-    return allowedSymbols.includes(symbol.toLowerCase()) && rulesWithDot(symbol) &&
-        rulesWithMinus(symbol) && rulesWithPlus(symbol) && rulesWithDiv(symbol) &&
-        rulesWithMulti(symbol) && commonRules(symbol);
+    let result = false;
+    if(allowedSymbols.includes(symbol.toLowerCase()) && commonRules(symbol)) {
+        switch (symbol) {
+            case ".":
+                result = rulesWithDot();
+                break;
+            case "+":
+            case "/":
+            case "*":
+                result = isFirstSymbolExists() && prevSymbolNotDot();
+                break;
+            case "0":
+                result = firstSymbolZeroIsOnlyOne();
+                break;
+            default:
+                result = true;
+                break;
+        }
+    }
+    return result;
 }
