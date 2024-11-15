@@ -52,7 +52,7 @@ function rulesWithDot(){
         for (let i = lastPositionDot; i < preparedCondition.length; i++) {
             if(operationSymbols.includes(preparedCondition[i])){
                 useOperation = true;
-            }else if(useOperation && !Number.isNaN(preparedCondition[i])){
+            }else if(useOperation && !isNaN(preparedCondition[i])){
                 canUseDot = true;
             }
         }
